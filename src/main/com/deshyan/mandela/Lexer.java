@@ -81,6 +81,12 @@ public class Lexer {
                 case '-':
                     advance();
                     return new Token(MINUS, currentChar);
+                case '(':
+                    advance();
+                    return new Token(LPAREN, currentChar);
+                case ')':
+                    advance();
+                    return new Token(RPAREN, currentChar);
                 default:
                     if (Character.isDigit(currentChar)) {
                         var integerResult = constructIntegerFromTokens();

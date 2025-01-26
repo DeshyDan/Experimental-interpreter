@@ -8,6 +8,7 @@ public class Interpreter {
 
     public Interpreter(String text) {
         this.lexer = new Lexer(text);
+        currentToken = lexer.getNextToken();
 
     }
 
@@ -52,15 +53,28 @@ public class Interpreter {
      */
     private int factor() {
         var token = currentToken;
-        eat(INTEGER);
-        return token.getValue();
+
+        if (token.getTokenType() == INTEGER) {
+            eat(INTEGER);
+            return token.getValue();
+        } else if (token.getTokenType() == LPAREN) {
+            eat(LPAREN);
+            int result = expression();
+            eat(RPAREN);
+            return result;
+        }
+        else {
+            throw new IllegalArgumentException("Invalid syntax");
+        }
+
+
     }
 
+
     /**
-     * Parses the text and evaluates it. Limited to INTEGER OP INTEGER and MINUS OP MINUS
+     * Parses the text and evaluates it.
      */
     public int expression() {
-        currentToken = lexer.getNextToken();
 
         int result = term();
 
@@ -75,17 +89,7 @@ public class Interpreter {
                 result -= term();
             }
         }
-        //        while (currentToken.getTokenType() == PLUS || currentToken.getTokenType() == MINUS) {
-        //            var token = currentToken;
-        //
-        //            if (token.getTokenType() == PLUS) {
-        //                eat(PLUS);
-        //                result += term();
-        //            } else if (token.getTokenType() == MINUS) {
-        //                eat(MINUS);
-        //                result -= term();
-        //            }
-        //        }
+
         return result;
     }
 }
