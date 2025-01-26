@@ -30,9 +30,19 @@ public class Interpreter {
      * @return value of current token
      */
     private int term() {
-        var token = currentToken;
-        eat(INTEGER);
-        return token.getValue();
+        int result = factor();
+        while (currentToken.getTokenType() == MULTIPLY || currentToken.getTokenType() == DIVIDE) {
+            var token = currentToken;
+            if (token.getTokenType() == MULTIPLY) {
+                eat(MULTIPLY);
+                result *= factor();
+            } else if (token.getTokenType() == DIVIDE) {
+                eat(DIVIDE);
+                result /= factor();
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -54,14 +64,15 @@ public class Interpreter {
 
         int result = term();
 
-        while (currentToken.getTokenType() == MULTIPLY || currentToken.getTokenType() == DIVIDE) {
+        while (currentToken.getTokenType() == PLUS || currentToken.getTokenType() == MINUS) {
             var token = currentToken;
-            if (token.getTokenType() == MULTIPLY) {
-                eat(MULTIPLY);
-                result *= factor();
-            } else if (token.getTokenType() == DIVIDE) {
-                eat(DIVIDE);
-                result /= factor();
+
+            if (token.getTokenType() == PLUS) {
+                eat(PLUS);
+                result += term();
+            } else if (token.getTokenType() == MINUS) {
+                eat(MINUS);
+                result -= term();
             }
         }
         //        while (currentToken.getTokenType() == PLUS || currentToken.getTokenType() == MINUS) {
