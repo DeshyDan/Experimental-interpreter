@@ -13,6 +13,9 @@ public class Interpreter {
         this.tokenizerIndex = 0;
         setCurrentChar(tokenizerIndex);
     }
+    //##########################################################
+    //# Lexer code                                             #
+    //##########################################################
 
     /**
      * Advances the tokenizerIndex to the next character in the text and sets the currentToken to current character
@@ -62,9 +65,10 @@ public class Interpreter {
      */
     private Token getNextToken() {
         while (currentChar != null) {
-            // If we reach end of file, there are no more token to consume
+
 
             char currentChar = text[tokenizerIndex];
+
             if (currentChar == ' ') {
                 skipWhitespace();
             } else if (Character.isDigit(currentChar)) {
@@ -80,10 +84,14 @@ public class Interpreter {
                 throw new IllegalArgumentException("Token not supported");
             }
         }
+        // If we reach end of file, there are no more token to consume
         return new Token(EOF, null);
 
 
     }
+    //##########################################################
+    //# Parser code                                            #
+    //##########################################################
 
     /**
      * Compares the current token type with the passed token type.
@@ -92,33 +100,42 @@ public class Interpreter {
     private void eat(TokenType tokenType) {
         if (currentToken.getTokenType().equals(tokenType)) {
             currentToken = getNextToken();
+        } else {
+            throw new IllegalArgumentException("Invalid syntax");
         }
 
     }
 
     /**
-     *  Parses the text and evaluates it. Limited to INTEGER OP INTEGER and MINUS OP MINUS
+     * Return an INTEGER token value
+     *
+     * @return value of current token
+     */
+    private int term() {
+        var token = currentToken;
+        eat(INTEGER);
+        return token.getValue();
+    }
+
+    /**
+     * Parses the text and evaluates it. Limited to INTEGER OP INTEGER and MINUS OP MINUS
      */
     public int expression() {
         currentToken = getNextToken();
 
-        Token left = currentToken;
-        eat(INTEGER);
+        int result = term();
 
-        var operation = currentToken;
-        eat(operation.getTokenType());
+        while (currentToken.getTokenType() == PLUS || currentToken.getTokenType() == MINUS) {
+            var token = currentToken;
 
-        Token right = currentToken;
-        eat(INTEGER);
-
-
-        int leftResult = left.getValue();
-        int rightResult = right.getValue();
-
-        if (operation.getTokenType().equals(PLUS)) {
-            return leftResult + rightResult;
-        } else {
-            return rightResult + leftResult;
+            if (token.getTokenType() == PLUS) {
+                eat(PLUS);
+                result += term();
+            } else if (token.getTokenType() == MINUS) {
+                eat(MINUS);
+                result -= term();
+            }
         }
+        return result;
     }
 }
