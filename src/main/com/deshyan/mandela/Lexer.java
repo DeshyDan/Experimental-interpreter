@@ -2,6 +2,9 @@ package com.deshyan.mandela;
 
 import static com.deshyan.mandela.TokenType.*;
 
+/**
+ * Responsible for breaking a sentence apart into tokens. This is also referred as lexical analysis/tokenization.
+ */
 public class Lexer {
 
     private final char[] text;
