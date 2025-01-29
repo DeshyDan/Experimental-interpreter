@@ -1,10 +1,14 @@
-package com.deshyan.mandela;
+package com.deshyan.mandela.parser;
 
+import com.deshyan.mandela.lexer.Lexer;
+import com.deshyan.mandela.lexer.Token;
+import com.deshyan.mandela.lexer.TokenType;
 import com.deshyan.mandela.abstractSyntaxTree.AbstractSyntaxTree;
 import com.deshyan.mandela.abstractSyntaxTree.BinaryOperator;
 import com.deshyan.mandela.abstractSyntaxTree.Num;
+import com.deshyan.mandela.abstractSyntaxTree.UnaryOperator;
 
-import static com.deshyan.mandela.TokenType.*;
+import static com.deshyan.mandela.lexer.TokenType.*;
 
 /**
  * Parser to parse the tokens and build the AST
@@ -59,16 +63,23 @@ public class Parser {
     private AbstractSyntaxTree factor() {
         var token = currentToken;
 
-        if (token.getTokenType() == INTEGER) {
-            eat(INTEGER);
-            return new Num(token);
-        } else if (token.getTokenType() == LPAREN) {
-            eat(LPAREN);
-            var node = expression();
-            eat(RPAREN);
-            return node;
-        } else {
-            throw new IllegalArgumentException("Invalid syntax");
+        switch (token.getTokenType()) {
+            case PLUS:
+                eat(PLUS);
+                return new UnaryOperator(token, factor());
+            case MINUS:
+                eat(MINUS);
+                return new UnaryOperator(token, factor());
+            case INTEGER:
+                eat(INTEGER);
+                return new Num(token);
+            case LPAREN:
+                eat(LPAREN);
+                var node = expression();
+                eat(RPAREN);
+                return node;
+            default:
+                throw new IllegalArgumentException("Invalid syntax");
         }
 
 

@@ -1,6 +1,6 @@
-package com.deshyan.mandela;
+package com.deshyan.mandela.lexer;
 
-import static com.deshyan.mandela.TokenType.*;
+import static com.deshyan.mandela.lexer.TokenType.*;
 
 /**
  * Responsible for breaking a sentence apart into tokens. This is also referred as lexical analysis/tokenization.

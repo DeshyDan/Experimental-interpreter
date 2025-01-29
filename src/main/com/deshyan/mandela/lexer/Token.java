@@ -1,4 +1,4 @@
-package com.deshyan.mandela;
+package com.deshyan.mandela.lexer;
 
 import lombok.Getter;
 

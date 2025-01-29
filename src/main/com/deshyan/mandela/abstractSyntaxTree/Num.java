@@ -1,6 +1,6 @@
 package com.deshyan.mandela.abstractSyntaxTree;
 
-import com.deshyan.mandela.Token;
+import com.deshyan.mandela.lexer.Token;
 import lombok.Getter;
 
 /**

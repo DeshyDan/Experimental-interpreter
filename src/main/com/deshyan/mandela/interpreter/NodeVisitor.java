@@ -1,4 +1,4 @@
-package com.deshyan.mandela;
+package com.deshyan.mandela.interpreter;
 
 
 import com.deshyan.mandela.abstractSyntaxTree.AbstractSyntaxTree;
