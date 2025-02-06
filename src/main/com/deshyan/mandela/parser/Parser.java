@@ -1,108 +1,162 @@
 package com.deshyan.mandela.parser;
 
-import com.deshyan.mandela.lexer.Lexer;
-import com.deshyan.mandela.lexer.Token;
-import com.deshyan.mandela.lexer.TokenType;
 import com.deshyan.mandela.abstractSyntaxTree.AbstractSyntaxTree;
 import com.deshyan.mandela.abstractSyntaxTree.BinaryOperator;
+import com.deshyan.mandela.abstractSyntaxTree.FunctionCall;
+import com.deshyan.mandela.abstractSyntaxTree.FunctionDefinition;
 import com.deshyan.mandela.abstractSyntaxTree.Number;
-import com.deshyan.mandela.abstractSyntaxTree.UnaryOperator;
+import com.deshyan.mandela.abstractSyntaxTree.Program;
+import com.deshyan.mandela.abstractSyntaxTree.Variable;
+import com.deshyan.mandela.abstractSyntaxTree.VariableDeclaration;
+import com.deshyan.mandela.lexer.Token;
+import com.deshyan.mandela.lexer.TokenType;
 
-import static com.deshyan.mandela.lexer.TokenType.*;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Parser to parse the tokens and build the AST
- */
+
 public class Parser {
-    private final Lexer lexer;
-    private Token currentToken;
+    private final List<Token> tokens;
+    private int pos = 0;
 
-    public Parser(Lexer lexer) {
-        this.lexer = lexer;
-        currentToken = lexer.getNextToken();
-    }
-
-    /**
-     * Compares the current token type with the passed token type.
-     * If they match then "eat" the current token and assign the next token to the currentToken
-     */
-    private void eat(TokenType tokenType) {
-        if (currentToken.getTokenType().equals(tokenType)) {
-            currentToken = lexer.getNextToken();
-        } else {
-            throw new IllegalArgumentException("Invalid syntax");
-        }
-
-    }
-    /**
-     * Return an INTEGER token value
-     *
-     * @return value of current token
-     */
-    private AbstractSyntaxTree term() {
-        var node = factor();
-        while (currentToken.getTokenType() == MULTIPLY || currentToken.getTokenType() == DIVIDE) {
-            var token = currentToken;
-
-            eat(token.getTokenType());
-
-            node = new BinaryOperator(node, token, factor());
-        }
-
-        return node;
-
-
-    }
-
-    /**
-     * Return an INTEGER token value
-     *
-     * @return value of current token
-     */
-    private AbstractSyntaxTree factor() {
-        var token = currentToken;
-
-        switch (token.getTokenType()) {
-            case PLUS:
-                eat(PLUS);
-                return new UnaryOperator(token, factor());
-            case MINUS:
-                eat(MINUS);
-                return new UnaryOperator(token, factor());
-            case INTEGER:
-                eat(INTEGER);
-                return new Number(token);
-            case LPAREN:
-                eat(LPAREN);
-                var node = expression();
-                eat(RPAREN);
-                return node;
-            default:
-                throw new IllegalArgumentException("Invalid syntax");
-        }
-
-
-    }
-
-    /**
-     * Parses the text and evaluates it.
-     */
-    public AbstractSyntaxTree expression() {
-
-        var node = term();
-
-        while (currentToken.getTokenType() == PLUS || currentToken.getTokenType() == MINUS) {
-            var token = currentToken;
-
-            eat(token.getTokenType());
-
-            node = new BinaryOperator(node, token, term());
-        }
-
-        return node;
+    public Parser(List<Token> tokens) {
+        this.tokens = tokens;
     }
 
     public AbstractSyntaxTree parse() {
-        return expression();
+        return parseProgram();
+    }
+
+    private AbstractSyntaxTree parseProgram() {
+        List<AbstractSyntaxTree> statements = new ArrayList<>();
+        while (!match(TokenType.EOF)) {
+            statements.add(parseStatement());
+        }
+        return new Program(statements);
+    }
+
+    private AbstractSyntaxTree parseStatement() {
+        if (match(TokenType.KEYWORD, "let")) {
+            return parseVariableDeclaration();
+        } else if (match(TokenType.KEYWORD, "func")) {
+            return parseFunctionDefinition();
+        } else {
+            return parseExpression();
+        }
+    }
+
+    private AbstractSyntaxTree parseVariableDeclaration() {
+        consume(TokenType.KEYWORD, "let");
+        Token name = consume(TokenType.IDENTIFIER);
+        consume(TokenType.PUNCTUATION, "=");
+        AbstractSyntaxTree value = parseExpression();
+        consume(TokenType.PUNCTUATION, ";");
+        return new VariableDeclaration(name.getText(), value);
+    }
+
+    private AbstractSyntaxTree parseFunctionDefinition() {
+        consume(TokenType.KEYWORD, "func");
+        Token name = consume(TokenType.IDENTIFIER);
+        consume(TokenType.PUNCTUATION, "(");
+        List<String> parameters = new ArrayList<>();
+        while (!match(TokenType.PUNCTUATION, ")")) {
+            parameters.add(consume(TokenType.IDENTIFIER).getText());
+            if (!match(TokenType.PUNCTUATION, ")")) {
+                consume(TokenType.PUNCTUATION, ",");
+            }
+        }
+        consume(TokenType.PUNCTUATION, ")");
+        consume(TokenType.PUNCTUATION, "{");
+        List<AbstractSyntaxTree> body = new ArrayList<>();
+        while (!match(TokenType.PUNCTUATION, "}")) {
+            body.add(parseStatement());
+        }
+        consume(TokenType.PUNCTUATION, "}");
+        return new FunctionDefinition(name.getText(), parameters, body);
+    }
+
+
+    private AbstractSyntaxTree parseExpression() {
+        return parseAdditiveExpression();
+    }
+
+    private AbstractSyntaxTree parseAdditiveExpression() {
+        AbstractSyntaxTree left = parseMultiplicativeExpression();
+        while (match(TokenType.OPERATOR, "+") || match(TokenType.OPERATOR, "-")) {
+            Token operator = consume();
+            AbstractSyntaxTree right = parseMultiplicativeExpression();
+            left = new BinaryOperator(left, operator, right);
+        }
+        return left;
+    }
+
+    private AbstractSyntaxTree parseMultiplicativeExpression() {
+        AbstractSyntaxTree left = parsePrimaryExpression();
+        while (match(TokenType.OPERATOR, "*") || match(TokenType.OPERATOR, "/")) {
+            Token operator = consume();
+            AbstractSyntaxTree right = parsePrimaryExpression();
+            left = new BinaryOperator(left, operator, right);
+        }
+        return left;
+    }
+
+    private AbstractSyntaxTree parsePrimaryExpression() {
+        if (match(TokenType.NUMBER)) {
+            return new Number(Integer.parseInt(consume().getText()));
+        } else if (match(TokenType.IDENTIFIER)) {
+            Token identifier = consume();
+            if (match(TokenType.PUNCTUATION, "(")) {
+                return parseFunctionCall(identifier.getText());
+            }
+            return new Variable(identifier.getText());
+        } else if (match(TokenType.PUNCTUATION, "(")) {
+            consume(TokenType.PUNCTUATION, "(");
+            AbstractSyntaxTree expr = parseExpression();
+            consume(TokenType.PUNCTUATION, ")");
+            return expr;
+        }
+        throw new RuntimeException("Unexpected token: " + peek().getText());
+    }
+
+    private AbstractSyntaxTree parseFunctionCall(String name) {
+        consume(TokenType.PUNCTUATION, "(");
+        List<AbstractSyntaxTree> arguments = new ArrayList<>();
+        while (!match(TokenType.PUNCTUATION, ")")) {
+            arguments.add(parseExpression());
+            if (!match(TokenType.PUNCTUATION, ")")) {
+                consume(TokenType.PUNCTUATION, ",");
+            }
+        }
+        consume(TokenType.PUNCTUATION, ")");
+        return new FunctionCall(name, arguments);
+    }
+
+    private boolean match(TokenType type, String text) {
+        return pos < tokens.size() && tokens.get(pos).getType() == type && tokens.get(pos).getText().equals(text);
+    }
+
+    private boolean match(TokenType type) {
+        return pos < tokens.size() && tokens.get(pos).getType() == type;
+    }
+
+    private Token consume(TokenType type, String text) {
+        if (match(type, text)) {
+            return tokens.get(pos++);
+        }
+        throw new RuntimeException("Expected " + type + " with text " + text + ", but found " + peek().getText());
+    }
+    private Token consume(TokenType type) {
+        if (match(type)) {
+            return tokens.get(pos++);
+        }
+        throw new RuntimeException("Expected " + type + ", but found " + peek().getText());
+    }
+
+    private Token consume() {
+        return tokens.get(pos++);
+    }
+
+    private Token peek() {
+        return tokens.get(pos);
     }
 }

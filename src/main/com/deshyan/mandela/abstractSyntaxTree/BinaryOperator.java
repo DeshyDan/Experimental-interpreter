@@ -11,15 +11,13 @@ import lombok.Getter;
  */
 @Getter
 public class BinaryOperator extends AbstractSyntaxTree {
-    private Token token;
-    private Token operator;
-    private AbstractSyntaxTree left;
-    private AbstractSyntaxTree right;
+    private final AbstractSyntaxTree left;
+    private final Token operator;
+    private final AbstractSyntaxTree right;
 
     public BinaryOperator(AbstractSyntaxTree left, Token operator, AbstractSyntaxTree right) {
         this.left = left;
         this.operator = operator;
-        this.token = operator;
         this.right = right;
     }
 }

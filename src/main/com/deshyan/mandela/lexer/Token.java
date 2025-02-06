@@ -4,22 +4,17 @@ import lombok.Getter;
 
 @Getter
 public class Token {
-    private final TokenType tokenType;
-    private final Object value;
 
-    public Token(TokenType tokenType, Object value) {
-        this.tokenType = tokenType;
-        this.value = value;
+    private final TokenType type;
+    private final String text;
+
+    public Token(TokenType type, String text) {
+        this.type = type;
+        this.text = text;
     }
 
-    public <T> T getValue() {
-        return (T) value;
-    }
     @Override
     public String toString() {
-        return "Token{" +
-                "tokenType=" + tokenType +
-                ", value='" + value + '\'' +
-                '}';
+        return String.format("Token(%s, %s)", type, text);
     }
 }

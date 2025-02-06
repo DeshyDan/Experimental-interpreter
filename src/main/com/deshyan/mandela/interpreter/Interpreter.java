@@ -1,64 +1,99 @@
 package com.deshyan.mandela.interpreter;
 
+import com.deshyan.mandela.abstractSyntaxTree.AbstractSyntaxTree;
 import com.deshyan.mandela.abstractSyntaxTree.BinaryOperator;
+import com.deshyan.mandela.abstractSyntaxTree.FunctionCall;
+import com.deshyan.mandela.abstractSyntaxTree.FunctionDefinition;
 import com.deshyan.mandela.abstractSyntaxTree.Number;
-import com.deshyan.mandela.abstractSyntaxTree.UnaryOperator;
-import com.deshyan.mandela.lexer.TokenType;
-import com.deshyan.mandela.parser.Parser;
+import com.deshyan.mandela.abstractSyntaxTree.Program;
+import com.deshyan.mandela.abstractSyntaxTree.Variable;
+import com.deshyan.mandela.abstractSyntaxTree.VariableDeclaration;
 
-public class Interpreter extends NodeVisitor {
-    private final Parser parser;
+import java.util.HashMap;
+import java.util.Map;
 
+public class Interpreter {
+    private Map<String, Object> globalScope = new HashMap<>();
+    private final Map<String, FunctionDefinition> functions = new HashMap<>();
 
-    public Interpreter(Parser parser) {
-        this.parser = parser;
+    public Object interpret(AbstractSyntaxTree node) {
+        if (node instanceof Program) {
+            return interpretProgram((Program) node);
+        } else if (node instanceof VariableDeclaration) {
+            return interpretVariableDeclaration((VariableDeclaration) node);
+        } else if (node instanceof Variable) {
+            return interpretVariable((Variable) node);
+        } else if (node instanceof FunctionDefinition) {
+            return interpretFunctionDefinition((FunctionDefinition) node);
+        } else if (node instanceof FunctionCall) {
+            return interpretFunctionCall((FunctionCall) node);
+        } else if (node instanceof BinaryOperator) {
+            return interpretBinaryOp((BinaryOperator) node);
+        } else if (node instanceof Number) {
+            return ((Number) node).getValue();
+        }
+        throw new RuntimeException("Unknown node type: " + node.getClass().getSimpleName());
     }
 
+    private Object interpretProgram(Program node) {
+        Object result = null;
+        for (AbstractSyntaxTree statement : node.getStatements()) {
+            result = interpret(statement);
+        }
+        return result;
+    }
 
-    public int visitBinaryOperator(BinaryOperator binaryOperator) {
-        switch (binaryOperator.getOperator().getTokenType()) {
-            case PLUS:
-                return (int) visit(binaryOperator.getLeft()) + (int) visit(binaryOperator.getRight());
-            case MINUS:
-                return (int) visit(binaryOperator.getLeft()) - (int) visit(binaryOperator.getRight());
-            case MULTIPLY:
-                return (int) visit(binaryOperator.getLeft()) * (int) visit(binaryOperator.getRight());
-            case DIVIDE:
-                return (int) visit(binaryOperator.getLeft()) / (int) visit(binaryOperator.getRight());
+    private Object interpretVariableDeclaration(VariableDeclaration node) {
+        Object value = interpret(node.getValue());
+        globalScope.put(node.getName(), value);
+        return value;
+    }
+
+    private Object interpretVariable(Variable node) {
+        if (!globalScope.containsKey(node.getName())) {
+            throw new RuntimeException("Undefined variable: " + node.getName());
+        }
+        return globalScope.get(node.getName());
+    }
+
+    private Object interpretFunctionDefinition(FunctionDefinition node) {
+        functions.put(node.getName(), node);
+        return null;
+    }
+
+    private Object interpretFunctionCall(FunctionCall node) {
+        FunctionDefinition function = functions.get(node.getName());
+        if (function == null) {
+            throw new RuntimeException("Undefined function: " + node.getName());
+        }
+        Map<String, Object> localScope = new HashMap<>();
+        for (int i = 0; i < function.getParameters().size(); i++) {
+            localScope.put(function.getParameters().get(i), interpret(node.getArguments().get(i)));
+        }
+        Map<String, Object> originalScope = globalScope;
+        globalScope = localScope;
+        Object result = null;
+        for (AbstractSyntaxTree bodyNode : function.getBody()) {
+            result = interpret(bodyNode);
+        }
+        globalScope = originalScope;
+        return result;
+    }
+
+    private Object interpretBinaryOp(BinaryOperator node) {
+        Object left = interpret(node.getLeft());
+        Object right = interpret(node.getRight());
+        switch (node.getOperator().getText()) {
+            case "+":
+                return (int) left + (int) right;
+            case "-":
+                return (int) left - (int) right;
+            case "*":
+                return (int) left * (int) right;
+            case "/":
+                return (int) left / (int) right;
             default:
-                throw new IllegalArgumentException("Invalid operator");
+                throw new RuntimeException("Unknown operator: " + node.getOperator().getText());
         }
-    }
-
-    public void visitNoOp() {
-        // Do nothing
-    }
-
-    public void visitCompound(Number.Compound node) {
-        for (var child : node.getChildren()) {
-            visit(child);
-        }
-    }
-
-    public int visitUnaryOperator(UnaryOperator node) {
-        var operation = node.getToken().getTokenType();
-
-        if (operation == TokenType.PLUS) {
-            return (int) visit(node.getExpr());
-        } else if (operation == TokenType.MINUS) {
-            return -1 * (int) visit(node.getExpr());
-        } else {
-            throw new IllegalArgumentException("Invalid operator");
-        }
-    }
-
-    public int visitNum(Number number) {
-        return number.getValue();
-    }
-
-    public int interpret() {
-        var tree = parser.parse();
-        return (int) visit(tree);
     }
 }
-
