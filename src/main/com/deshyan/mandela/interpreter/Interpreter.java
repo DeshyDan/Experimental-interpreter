@@ -1,7 +1,7 @@
 package com.deshyan.mandela.interpreter;
 
 import com.deshyan.mandela.abstractSyntaxTree.BinaryOperator;
-import com.deshyan.mandela.abstractSyntaxTree.Num;
+import com.deshyan.mandela.abstractSyntaxTree.Number;
 import com.deshyan.mandela.abstractSyntaxTree.UnaryOperator;
 import com.deshyan.mandela.lexer.TokenType;
 import com.deshyan.mandela.parser.Parser;
@@ -30,6 +30,16 @@ public class Interpreter extends NodeVisitor {
         }
     }
 
+    public void visitNoOp() {
+        // Do nothing
+    }
+
+    public void visitCompound(Number.Compound node) {
+        for (var child : node.getChildren()) {
+            visit(child);
+        }
+    }
+
     public int visitUnaryOperator(UnaryOperator node) {
         var operation = node.getToken().getTokenType();
 
@@ -42,8 +52,8 @@ public class Interpreter extends NodeVisitor {
         }
     }
 
-    public int visitNum(Num num) {
-        return num.getValue();
+    public int visitNum(Number number) {
+        return number.getValue();
     }
 
     public int interpret() {

@@ -5,7 +5,7 @@ import com.deshyan.mandela.lexer.Token;
 import com.deshyan.mandela.lexer.TokenType;
 import com.deshyan.mandela.abstractSyntaxTree.AbstractSyntaxTree;
 import com.deshyan.mandela.abstractSyntaxTree.BinaryOperator;
-import com.deshyan.mandela.abstractSyntaxTree.Num;
+import com.deshyan.mandela.abstractSyntaxTree.Number;
 import com.deshyan.mandela.abstractSyntaxTree.UnaryOperator;
 
 import static com.deshyan.mandela.lexer.TokenType.*;
@@ -34,7 +34,6 @@ public class Parser {
         }
 
     }
-
     /**
      * Return an INTEGER token value
      *
@@ -72,7 +71,7 @@ public class Parser {
                 return new UnaryOperator(token, factor());
             case INTEGER:
                 eat(INTEGER);
-                return new Num(token);
+                return new Number(token);
             case LPAREN:
                 eat(LPAREN);
                 var node = expression();

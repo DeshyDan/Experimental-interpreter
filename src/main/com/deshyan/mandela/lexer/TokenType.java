@@ -8,5 +8,11 @@ public enum TokenType {
     DIVIDE,
     EOF,
     LPAREN,
-    RPAREN
+    RPAREN,
+    ID,
+    ASSIGN,
+    BEGIN,
+    END,
+    SEMI,
+    DOT,
 }
