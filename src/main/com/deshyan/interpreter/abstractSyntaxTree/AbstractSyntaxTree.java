@@ -1,4 +1,4 @@
-package com.deshyan.interpretor.abstractSyntaxTree;
+package com.deshyan.interpreter.abstractSyntaxTree;
 
 /**
  * This is a tree that represents the abstract syntactic structure of a language construct where each interior node and

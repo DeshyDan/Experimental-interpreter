@@ -1,6 +1,6 @@
-package com.deshyan.interpretor.abstractSyntaxTree;
+package com.deshyan.interpreter.abstractSyntaxTree;
 
-import com.deshyan.interpretor.lexer.Token;
+import com.deshyan.interpreter.lexer.Token;
 import lombok.Getter;
 
 /**

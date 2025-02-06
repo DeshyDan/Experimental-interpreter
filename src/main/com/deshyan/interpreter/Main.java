@@ -1,10 +1,10 @@
-package com.deshyan.interpretor;
+package com.deshyan.interpreter;
 
-import com.deshyan.interpretor.abstractSyntaxTree.AbstractSyntaxTree;
-import com.deshyan.interpretor.interpreter.Interpreter;
-import com.deshyan.interpretor.lexer.Lexer;
-import com.deshyan.interpretor.lexer.Token;
-import com.deshyan.interpretor.parser.Parser;
+import com.deshyan.interpreter.abstractSyntaxTree.AbstractSyntaxTree;
+import com.deshyan.interpreter.interpreter.Interpreter;
+import com.deshyan.interpreter.lexer.Lexer;
+import com.deshyan.interpreter.lexer.Token;
+import com.deshyan.interpreter.parser.Parser;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.deshyan.interpretor.lexer;
+package com.deshyan.interpreter.lexer;
 
 import lombok.Getter;
 

@@ -1,15 +1,15 @@
-package com.deshyan.interpretor.parser;
+package com.deshyan.interpreter.parser;
 
-import com.deshyan.interpretor.abstractSyntaxTree.AbstractSyntaxTree;
-import com.deshyan.interpretor.abstractSyntaxTree.BinaryOperator;
-import com.deshyan.interpretor.abstractSyntaxTree.FunctionCall;
-import com.deshyan.interpretor.abstractSyntaxTree.FunctionDefinition;
-import com.deshyan.interpretor.abstractSyntaxTree.Number;
-import com.deshyan.interpretor.abstractSyntaxTree.Program;
-import com.deshyan.interpretor.abstractSyntaxTree.Variable;
-import com.deshyan.interpretor.abstractSyntaxTree.VariableDeclaration;
-import com.deshyan.interpretor.lexer.Token;
-import com.deshyan.interpretor.lexer.TokenType;
+import com.deshyan.interpreter.abstractSyntaxTree.AbstractSyntaxTree;
+import com.deshyan.interpreter.abstractSyntaxTree.BinaryOperator;
+import com.deshyan.interpreter.abstractSyntaxTree.FunctionCall;
+import com.deshyan.interpreter.abstractSyntaxTree.FunctionDefinition;
+import com.deshyan.interpreter.abstractSyntaxTree.Number;
+import com.deshyan.interpreter.abstractSyntaxTree.Program;
+import com.deshyan.interpreter.abstractSyntaxTree.Variable;
+import com.deshyan.interpreter.abstractSyntaxTree.VariableDeclaration;
+import com.deshyan.interpreter.lexer.Token;
+import com.deshyan.interpreter.lexer.TokenType;
 
 import java.util.ArrayList;
 import java.util.List;
