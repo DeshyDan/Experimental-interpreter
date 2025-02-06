@@ -6,6 +6,7 @@ import com.deshyan.interpreter.abstractSyntaxTree.FunctionCall;
 import com.deshyan.interpreter.abstractSyntaxTree.FunctionDefinition;
 import com.deshyan.interpreter.abstractSyntaxTree.Number;
 import com.deshyan.interpreter.abstractSyntaxTree.Program;
+import com.deshyan.interpreter.abstractSyntaxTree.Return;
 import com.deshyan.interpreter.abstractSyntaxTree.Variable;
 import com.deshyan.interpreter.abstractSyntaxTree.VariableDeclaration;
 import com.deshyan.interpreter.lexer.Token;
@@ -13,7 +14,6 @@ import com.deshyan.interpreter.lexer.TokenType;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class Parser {
     private final List<Token> tokens;
@@ -40,8 +40,14 @@ public class Parser {
             return parseVariableDeclaration();
         } else if (match(TokenType.KEYWORD, "func")) {
             return parseFunctionDefinition();
+        } else if (match(TokenType.KEYWORD, "return")) {
+            return parseReturnStatement();
         } else {
-            return parseExpression();
+            AbstractSyntaxTree expr = parseExpression();
+            if (!match(TokenType.PUNCTUATION, "}")) {
+                consume(TokenType.PUNCTUATION, ";");
+            }
+            return expr;
         }
     }
 
@@ -75,6 +81,12 @@ public class Parser {
         return new FunctionDefinition(name.getText(), parameters, body);
     }
 
+    private AbstractSyntaxTree parseReturnStatement() {
+        consume(TokenType.KEYWORD, "return");
+        AbstractSyntaxTree expr = parseExpression();
+        consume(TokenType.PUNCTUATION, ";");
+        return new Return(expr);
+    }
 
     private AbstractSyntaxTree parseExpression() {
         return parseAdditiveExpression();
@@ -145,6 +157,7 @@ public class Parser {
         }
         throw new RuntimeException("Expected " + type + " with text " + text + ", but found " + peek().getText());
     }
+
     private Token consume(TokenType type) {
         if (match(type)) {
             return tokens.get(pos++);

@@ -1,0 +1,7 @@
+let x = 10;
+
+func add(a, b) {
+    return a+b;
+ }
+
+let result = add(x, 5);

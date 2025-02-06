@@ -6,6 +6,7 @@ import com.deshyan.interpreter.abstractSyntaxTree.FunctionCall;
 import com.deshyan.interpreter.abstractSyntaxTree.FunctionDefinition;
 import com.deshyan.interpreter.abstractSyntaxTree.Number;
 import com.deshyan.interpreter.abstractSyntaxTree.Program;
+import com.deshyan.interpreter.abstractSyntaxTree.Return;
 import com.deshyan.interpreter.abstractSyntaxTree.Variable;
 import com.deshyan.interpreter.abstractSyntaxTree.VariableDeclaration;
 
@@ -31,6 +32,8 @@ public class Interpreter {
             return interpretBinaryOp((BinaryOperator) node);
         } else if (node instanceof Number) {
             return ((Number) node).getValue();
+        } else if (node instanceof Return) {
+            return interpret(((Return) node).expression);
         }
         throw new RuntimeException("Unknown node type: " + node.getClass().getSimpleName());
     }
