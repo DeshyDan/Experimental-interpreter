@@ -1,13 +1,13 @@
-package com.deshyan.mandela.interpreter;
+package com.deshyan.interpretor.interpreter;
 
-import com.deshyan.mandela.abstractSyntaxTree.AbstractSyntaxTree;
-import com.deshyan.mandela.abstractSyntaxTree.BinaryOperator;
-import com.deshyan.mandela.abstractSyntaxTree.FunctionCall;
-import com.deshyan.mandela.abstractSyntaxTree.FunctionDefinition;
-import com.deshyan.mandela.abstractSyntaxTree.Number;
-import com.deshyan.mandela.abstractSyntaxTree.Program;
-import com.deshyan.mandela.abstractSyntaxTree.Variable;
-import com.deshyan.mandela.abstractSyntaxTree.VariableDeclaration;
+import com.deshyan.interpretor.abstractSyntaxTree.AbstractSyntaxTree;
+import com.deshyan.interpretor.abstractSyntaxTree.BinaryOperator;
+import com.deshyan.interpretor.abstractSyntaxTree.FunctionCall;
+import com.deshyan.interpretor.abstractSyntaxTree.FunctionDefinition;
+import com.deshyan.interpretor.abstractSyntaxTree.Number;
+import com.deshyan.interpretor.abstractSyntaxTree.Program;
+import com.deshyan.interpretor.abstractSyntaxTree.Variable;
+import com.deshyan.interpretor.abstractSyntaxTree.VariableDeclaration;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,10 +1,10 @@
-package com.deshyan.mandela;
+package com.deshyan.interpretor;
 
-import com.deshyan.mandela.abstractSyntaxTree.AbstractSyntaxTree;
-import com.deshyan.mandela.interpreter.Interpreter;
-import com.deshyan.mandela.lexer.Lexer;
-import com.deshyan.mandela.lexer.Token;
-import com.deshyan.mandela.parser.Parser;
+import com.deshyan.interpretor.abstractSyntaxTree.AbstractSyntaxTree;
+import com.deshyan.interpretor.interpreter.Interpreter;
+import com.deshyan.interpretor.lexer.Lexer;
+import com.deshyan.interpretor.lexer.Token;
+import com.deshyan.interpretor.parser.Parser;
 
 import java.util.List;
 

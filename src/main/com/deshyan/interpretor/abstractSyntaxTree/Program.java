@@ -1,4 +1,4 @@
-package com.deshyan.mandela.abstractSyntaxTree;
+package com.deshyan.interpretor.abstractSyntaxTree;
 
 import lombok.Getter;
 

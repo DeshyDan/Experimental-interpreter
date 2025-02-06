@@ -1,4 +1,4 @@
-package com.deshyan.mandela.lexer;
+package com.deshyan.interpretor.lexer;
 
 import java.util.ArrayList;
 import java.util.List;

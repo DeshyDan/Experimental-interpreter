@@ -1,15 +1,15 @@
-package com.deshyan.mandela.parser;
+package com.deshyan.interpretor.parser;
 
-import com.deshyan.mandela.abstractSyntaxTree.AbstractSyntaxTree;
-import com.deshyan.mandela.abstractSyntaxTree.BinaryOperator;
-import com.deshyan.mandela.abstractSyntaxTree.FunctionCall;
-import com.deshyan.mandela.abstractSyntaxTree.FunctionDefinition;
-import com.deshyan.mandela.abstractSyntaxTree.Number;
-import com.deshyan.mandela.abstractSyntaxTree.Program;
-import com.deshyan.mandela.abstractSyntaxTree.Variable;
-import com.deshyan.mandela.abstractSyntaxTree.VariableDeclaration;
-import com.deshyan.mandela.lexer.Token;
-import com.deshyan.mandela.lexer.TokenType;
+import com.deshyan.interpretor.abstractSyntaxTree.AbstractSyntaxTree;
+import com.deshyan.interpretor.abstractSyntaxTree.BinaryOperator;
+import com.deshyan.interpretor.abstractSyntaxTree.FunctionCall;
+import com.deshyan.interpretor.abstractSyntaxTree.FunctionDefinition;
+import com.deshyan.interpretor.abstractSyntaxTree.Number;
+import com.deshyan.interpretor.abstractSyntaxTree.Program;
+import com.deshyan.interpretor.abstractSyntaxTree.Variable;
+import com.deshyan.interpretor.abstractSyntaxTree.VariableDeclaration;
+import com.deshyan.interpretor.lexer.Token;
+import com.deshyan.interpretor.lexer.TokenType;
 
 import java.util.ArrayList;
 import java.util.List;
