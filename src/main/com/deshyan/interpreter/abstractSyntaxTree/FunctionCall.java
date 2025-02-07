@@ -4,6 +4,9 @@ import lombok.Getter;
 
 import java.util.List;
 
+/**
+ * Represents a function call in the AST.
+ */
 @Getter
 public class FunctionCall extends AbstractSyntaxTree {
     private final String name;

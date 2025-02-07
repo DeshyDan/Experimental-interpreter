@@ -13,10 +13,19 @@ import com.deshyan.interpreter.abstractSyntaxTree.VariableDeclaration;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Interprets an abstract syntax tree.
+ */
 public class Interpreter {
     private Map<String, Object> globalScope = new HashMap<>();
     private final Map<String, FunctionDefinition> functions = new HashMap<>();
 
+    /**
+     * Interprets the given abstract syntax tree.
+     *
+     * @param node The abstract syntax tree to interpret.
+     * @return The result of the interpretation.
+     */
     public Object interpret(AbstractSyntaxTree node) {
         if (node instanceof Program) {
             return interpretProgram((Program) node);
@@ -33,11 +42,17 @@ public class Interpreter {
         } else if (node instanceof Number) {
             return ((Number) node).getValue();
         } else if (node instanceof Return) {
-            return interpret(((Return) node).expression);
+            return interpret(((Return) node).getExpression());
         }
         throw new RuntimeException("Unknown node type: " + node.getClass().getSimpleName());
     }
 
+    /**
+     * Interprets a program node
+     *
+     * @param node The program node to interpret
+     * @return The result of the interpretation
+     */
     private Object interpretProgram(Program node) {
         Object result = null;
         for (AbstractSyntaxTree statement : node.getStatements()) {
@@ -46,12 +61,24 @@ public class Interpreter {
         return result;
     }
 
+    /**
+     * Interprets a variable declaration node
+     *
+     * @param node The variable declaration node to interpret
+     * @return The result of the interpretation
+     */
     private Object interpretVariableDeclaration(VariableDeclaration node) {
         Object value = interpret(node.getValue());
         globalScope.put(node.getName(), value);
         return value;
     }
 
+    /**
+     * Interprets a variable node
+     *
+     * @param node The variable node to interpret
+     * @return The result of the interpretation
+     */
     private Object interpretVariable(Variable node) {
         if (!globalScope.containsKey(node.getName())) {
             throw new RuntimeException("Undefined variable: " + node.getName());
@@ -59,11 +86,23 @@ public class Interpreter {
         return globalScope.get(node.getName());
     }
 
+    /**
+     * Interprets a function definition node
+     *
+     * @param node The function definition node to interpret
+     * @return The result of the interpretation
+     */
     private Object interpretFunctionDefinition(FunctionDefinition node) {
         functions.put(node.getName(), node);
         return null;
     }
 
+    /**
+     * Interprets a function call node
+     *
+     * @param node The function call node to interpret
+     * @return The result of the interpretation
+     */
     private Object interpretFunctionCall(FunctionCall node) {
         FunctionDefinition function = functions.get(node.getName());
         if (function == null) {
@@ -83,6 +122,12 @@ public class Interpreter {
         return result;
     }
 
+    /**
+     * Interprets a binary operator node
+     *
+     * @param node The binary operator node to interpret
+     * @return The result of the interpretation
+     */
     private Object interpretBinaryOp(BinaryOperator node) {
         Object left = interpret(node.getLeft());
         Object right = interpret(node.getRight());

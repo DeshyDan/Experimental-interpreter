@@ -4,6 +4,9 @@ import lombok.Getter;
 
 import java.util.List;
 
+/**
+ * Represents a function definition in the AST.
+ */
 @Getter
 public class FunctionDefinition extends AbstractSyntaxTree {
     private final String name;

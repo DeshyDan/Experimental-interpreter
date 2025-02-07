@@ -15,6 +15,9 @@ import com.deshyan.interpreter.lexer.TokenType;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parses a list of tokens into an abstract syntax tree.
+ */
 public class Parser {
     private final List<Token> tokens;
     private int pos = 0;
@@ -23,10 +26,20 @@ public class Parser {
         this.tokens = tokens;
     }
 
+    /**
+     * Parses the list of tokens into an abstract syntax tree.
+     *
+     * @return The abstract syntax tree representing the program.
+     */
     public AbstractSyntaxTree parse() {
         return parseProgram();
     }
 
+    /**
+     * Parses the list of tokens into an abstract syntax tree.
+     *
+     * @return The abstract syntax tree representing the program.
+     */
     private AbstractSyntaxTree parseProgram() {
         List<AbstractSyntaxTree> statements = new ArrayList<>();
         while (!match(TokenType.EOF)) {
@@ -35,6 +48,9 @@ public class Parser {
         return new Program(statements);
     }
 
+    /**
+     * @return abstract syntax tree representing the statement.
+     */
     private AbstractSyntaxTree parseStatement() {
         if (match(TokenType.KEYWORD, "let")) {
             return parseVariableDeclaration();
@@ -130,6 +146,12 @@ public class Parser {
         throw new RuntimeException("Unexpected token: " + peek().getText());
     }
 
+    /**
+     * Parses a function call.
+     *
+     * @param name The name of the function to call.
+     * @return
+     */
     private AbstractSyntaxTree parseFunctionCall(String name) {
         consume(TokenType.PUNCTUATION, "(");
         List<AbstractSyntaxTree> arguments = new ArrayList<>();
@@ -147,10 +169,23 @@ public class Parser {
         return pos < tokens.size() && tokens.get(pos).getType() == type && tokens.get(pos).getText().equals(text);
     }
 
+    /**
+     * Checks if the next token in the list matches the given type.
+     *
+     * @param type The type to check for.
+     * @return true if the next token matches the given type, false otherwise.
+     */
     private boolean match(TokenType type) {
         return pos < tokens.size() && tokens.get(pos).getType() == type;
     }
 
+    /**
+     * Consumes the next token in the list if it matches the given type and text.
+     *
+     * @param type The type of token to consume.
+     * @param text The text of the token to consume.
+     * @return The consumed token.
+     */
     private Token consume(TokenType type, String text) {
         if (match(type, text)) {
             return tokens.get(pos++);
@@ -158,6 +193,12 @@ public class Parser {
         throw new RuntimeException("Expected " + type + " with text " + text + ", but found " + peek().getText());
     }
 
+    /**
+     * Consumes the next token in the list if it matches the given type.
+     *
+     * @param type The type of token to consume.
+     * @return The consumed token.
+     */
     private Token consume(TokenType type) {
         if (match(type)) {
             return tokens.get(pos++);
@@ -165,10 +206,18 @@ public class Parser {
         throw new RuntimeException("Expected " + type + ", but found " + peek().getText());
     }
 
+    /**
+     * Consumes the next token in the list.
+     *
+     * @return The consumed token.
+     */
     private Token consume() {
         return tokens.get(pos++);
     }
 
+    /**
+     * @return The next token in the list.
+     */
     private Token peek() {
         return tokens.get(pos);
     }

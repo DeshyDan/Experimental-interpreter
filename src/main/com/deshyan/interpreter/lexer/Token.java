@@ -2,6 +2,9 @@ package com.deshyan.interpreter.lexer;
 
 import lombok.Getter;
 
+/**
+ * Represents a token in the lexer.
+ */
 @Getter
 public class Token {
 
