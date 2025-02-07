@@ -41,7 +41,7 @@ public class Lexer {
             sb.append(input.charAt(pos++));
         }
         String text = sb.toString();
-        if (text.equals("func") || text.equals("let") || text.equals("if") || text.equals("while")) {
+        if (text.equals("func")|| text.equals("return") || text.equals("let") || text.equals("if") || text.equals("while")) {
             return new Token(TokenType.KEYWORD, text);
         }
         return new Token(TokenType.IDENTIFIER, text);
